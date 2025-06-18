@@ -1,0 +1,25 @@
+h1 {
+    font-family: sans-serif;
+    font-weight: bold;
+    text-shadow: -2px 2px 1px grey;
+}
+
+
+nav {
+    font-family: sans-serif;
+}
+
+.navmain {
+    font-weight: bold;
+    font-family: sans-serif;
+}
+
+div {
+    font-family: sans-serif;
+}
+
+p {
+    font-weight: normal;
+    font-family: sans-serif;
+}
+
