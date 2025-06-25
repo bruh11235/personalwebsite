@@ -1,21 +1,77 @@
-h1 {
-    font-family: sans-serif;
-    font-weight: bold;
-    text-shadow: -2px 2px 1px grey;
+/* ===== Set page to border-box sizing ===== */
+
+* {
+    margin: 0;
 }
 
+html {
+    box-sizing: border-box;
+}
 
-nav {
+*,
+*::before,
+*::after {
+    box-sizing: inherit;
+}
+
+/* ===== Navigation Bar ===== */
+
+nav ul {
+    font-size: 1.3rem;
     font-family: sans-serif;
+    background-color: rgb(245, 247, 252);
+    border-bottom: solid;
+    border-bottom-width: 1px;
+    border-bottom-color: lightgray;
+    display: flex;
+    list-style: none;
+    padding-left: 0;
+    padding: 0.2rem;
+}
+
+nav a {
+    display: inline-block;
+    text-decoration: none;
+    color: gray;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+}
+
+nav a:hover {
+    background-color: rgb(224, 224, 224);
 }
 
 .navmain {
     font-weight: bold;
+}
+
+
+/* ===== General Page Style ===== */
+
+main {
+    display: flex;
+}
+
+main > * {
+    padding: 0.5rem;
+}
+
+aside {
+    border-right: solid;
+    border-right-width: 1px;
+    border-right-color: lightgray;
     font-family: sans-serif;
 }
 
-div {
+aside img {
+    width: 150px;
+    height: 200px;
+}
+
+h1 {
+    color: darkblue;
     font-family: sans-serif;
+    font-weight: bold;
 }
 
 p {
