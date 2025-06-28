@@ -1,8 +1,22 @@
-/* ===== Set page to border-box sizing ===== */
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+/* ===== Universal Settings ===== */
 
 * {
     margin: 0;
 }
+
+body { 
+    font-size: 1.25rem;
+    font-family: Verdana, sans-serif;
+    animation: fadeIn 1s;
+    color: rgb(78, 78, 78);
+}
+
+/* ===== Set page to border-box sizing ===== */
 
 html {
     box-sizing: border-box;
@@ -17,16 +31,15 @@ html {
 /* ===== Navigation Bar ===== */
 
 nav ul {
-    font-size: 1.3rem;
-    font-family: sans-serif;
+    font-size: 1.75rem;
     background-color: rgb(245, 247, 252);
     border-bottom: solid;
     border-bottom-width: 1px;
     border-bottom-color: lightgray;
     display: flex;
     list-style: none;
-    padding-left: 0;
-    padding: 0.2rem;
+    padding: 1rem;
+    padding-left: 20%;
 }
 
 nav a {
@@ -37,7 +50,7 @@ nav a {
     border-radius: 0.5rem;
 }
 
-nav a:hover {
+nav a:hover:not(.navmain a:hover) {
     background-color: rgb(224, 224, 224);
 }
 
@@ -45,22 +58,13 @@ nav a:hover {
     font-weight: bold;
 }
 
-
-/* ===== General Page Style ===== */
-
-main {
-    display: flex;
-}
-
-main > * {
-    padding: 0.5rem;
-}
+/* ===== Sidebar ====== */
 
 aside {
-    border-right: solid;
+    font-size: 1rem;
+    /* border-right: solid;
     border-right-width: 1px;
-    border-right-color: lightgray;
-    font-family: sans-serif;
+    border-right-color: lightgray; */
 }
 
 aside img {
@@ -68,14 +72,62 @@ aside img {
     height: 200px;
 }
 
+.sidebar {
+    font-size: 1rem;
+}
+
+.sidebar ul {
+    padding-left: 0rem;
+    list-style-type: none;
+    list-style-position: inside;
+}
+
+.sidebar li {
+    padding-left: 1.5rem;
+    background-position: 0 0;
+    background-size: 1rem 1rem;
+    background-repeat: no-repeat;
+}
+
+.sidebar li:nth-child(1) { background-image: url(../resources/location_icon.png); }
+.sidebar li:nth-child(2) { background-image: url(../resources/email_icon.png); }
+.sidebar li:nth-child(3) { background-image: url(../resources/linkedin_icon.png); }
+
+.sidebar a {
+    color: unset;
+}
+
+
+.sidebar a:not(:hover) {
+    text-decoration: none;
+}
+
+/* ===== General Page Style ===== */
+
+main {
+    margin-top: 3rem;
+    display: flex;
+    justify-content: center;
+}
+
+main > * {
+    padding: 0.5rem;
+}
+
 h1 {
-    color: darkblue;
-    font-family: sans-serif;
+    color: rgb(0, 0, 87);
     font-weight: bold;
 }
 
 p {
     font-weight: normal;
-    font-family: sans-serif;
 }
 
+section {
+    width: 40rem;
+    margin-left: 5rem;
+}
+
+section p + p { 
+    margin-top: 1rem;
+}

@@ -1,4 +1,4 @@
-const text = document.querySelector("p");
+const text = document.querySelector(".autodate");
 const currentDate = new Date();
 const enrollDate = new Date('2023-09-01T00:00:00Z');
 const ordinals = ["first", "second", "third", "fourth", "fifth"];
