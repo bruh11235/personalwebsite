@@ -39,7 +39,7 @@ nav ul {
     display: flex;
     list-style: none;
     padding: 1rem;
-    padding-left: 20%;
+    padding-left: 5rem;
 }
 
 nav a {
@@ -68,8 +68,10 @@ aside {
 }
 
 aside img {
+    display: block;
     width: 150px;
     height: 200px;
+    margin: auto;
 }
 
 .sidebar {
