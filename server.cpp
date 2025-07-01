@@ -133,6 +133,16 @@ void timeout_handler(int signum) {
 }
 
 int main() {
+    // === Prevent zombies ===
+    struct sigaction sa;
+    sa.sa_handler = SIG_IGN;
+    sa.sa_flags = SA_NOCLDWAIT;
+    sigemptyset(&sa.sa_mask);
+    if (sigaction(SIGCHLD, &sa, NULL) == -1) {
+        perror("sigaction");
+        exit(1);
+    }
+
     // === Create socket ===
     int listen_soc = socket(AF_INET, SOCK_STREAM, 0);
     if (listen_soc == -1) {
