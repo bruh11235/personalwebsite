@@ -3,10 +3,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <signal.h>
 // C++ libraries
+#include <algorithm>
 #include <iostream>
 #include <sstream>
+#include <vector>
 #include <string>
+#include <map>
 // Network system libraries
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -44,7 +48,9 @@ std::pair<std::string, std::string> parse_http_request(std::string request) {
     std::stringstream ss(request);
     std::string word = "";  
     while (word != "GET") {
-        ss >> word;
+        if (!(ss >> word)) {
+            return {"invalid_path", "null"};
+        }
     }
     ss >> word;
 
@@ -68,12 +74,12 @@ int get_response(char *response, const char path[], std::string type) {
     else if (type == "pdf") strcat(response, pdf_header);
     else if (type == "png") strcat(response, png_header);
     else {
-        fprintf(stderr, "Unkown file extension\n");
+        fprintf(stderr, "Unkown file extension: %s\n", path);
         strcat(response, notfound_header);
         return strlen(response);
     }
     
-    if (type == "html" || type == "css" || type == "js") {
+    if (type == "html" || type == "css" || type == "js") {  // text files
         FILE *fp = fopen(path, "r");
         if (fp == NULL) {
             perror("fopen");
@@ -85,7 +91,7 @@ int get_response(char *response, const char path[], std::string type) {
         while (fgets(line, 1000, fp) != NULL) {
             line[strlen(line) + 1] = '\0';
             line[strlen(line) - 1] = '\r';
-            line[strlen(line)] = '\n';  // (Make sure last line ends with '\n')
+            line[strlen(line)] = '\n';  // Make sure last line ends with '\n'
             strcat(response, line);
         }
 
@@ -94,7 +100,7 @@ int get_response(char *response, const char path[], std::string type) {
             exit(1);
         }
         return strlen(response);
-    } else {
+    } else {  // binary files
         FILE *fp = fopen(path, "rb");
         if (fp == NULL) {
             perror("fopen");
@@ -118,15 +124,23 @@ int get_response(char *response, const char path[], std::string type) {
     }
 }
 
+int fd_to_close = -1;
+// 60 Second time limit for child process connection
+void timeout_handler(int signum) {
+    fprintf(stderr, "connection timed out\n");
+    close(fd_to_close);
+    exit(0);  // Exit immediately
+}
+
 int main() {
-    // Create socket
+    // === Create socket ===
     int listen_soc = socket(AF_INET, SOCK_STREAM, 0);
     if (listen_soc == -1) {
         perror("socket");
         exit(1);
     }
 
-    // Bind socket
+    // === Bind socket ===
     sockaddr_in addr;
     addr.sin_family = AF_INET;
     addr.sin_port = htons(PORT);  // (host to network order)
@@ -137,13 +151,13 @@ int main() {
         exit(1);
     }
 
-    // Listen
+    // === Listen ===
     if (listen(listen_soc, 10) == -1) {
         perror("listen");
         exit(1);
     }
 
-    // Accepting loop
+    // === Accepting loop ===
     while (1) {
         std::cout << "Waiting for client...\n";
 
@@ -156,18 +170,31 @@ int main() {
             perror("accept");
             exit(1);
         }
-
         std::cout << "Client connected\n";
 
-        char buf[16000];  // (Should be enough for lightweight servers; Further improvemnts -> buffered reader)
-        int n = read(client_soc, buf, sizeof(buf));
-        buf[n] = '\0';
-        std::pair<std::string, std::string> path_type = parse_http_request(buf);
-        std::cout << "Requesting " << path_type.second << " file at " << path_type.first << "\n";
-        
-        char response[500000] = {'\0'};
-        int len = get_response(response, path_type.first.c_str(), path_type.second);
-        write(client_soc, response, len);
-        close(client_soc);
+        int fork_result = fork();
+        if (fork_result == 0) {  // Child process
+            close(listen_soc);
+            fd_to_close = client_soc;
+            signal(SIGALRM, timeout_handler);
+            alarm(60); 
+
+            char buf[16000];  // Further improvemnts: use buffered reader
+            int n = read(client_soc, buf, sizeof(buf));
+            buf[n] = '\0';
+            std::pair<std::string, std::string> path_type = parse_http_request(buf);
+            std::cout << "Requesting " << path_type.second << " file at " << path_type.first << "\n";
+            
+            char response[500000] = {'\0'};
+            int len = get_response(response, path_type.first.c_str(), path_type.second);
+            write(client_soc, response, len);
+            close(client_soc);
+            exit(0);
+        } else if (fork_result > 0) {
+            close(client_soc);
+        } else {
+            perror("fork");
+            exit(1);
+        }
     }
 }
