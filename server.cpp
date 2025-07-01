@@ -18,7 +18,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 
-const int PORT = 8080;
+const int PORT = 54321;
 const char *html_header = "HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=UTF-8\r\nConnection: close\r\n\r\n";
 const char *css_header = "HTTP/1.1 200 OK\r\nContent-Type: text/css; charset=UTF-8\r\nConnection: close\r\n\r\n";
 const char *java_header = "HTTP/1.1 200 OK\r\nContent-Type: application/javascript; charset=UTF-8\r\nConnection: close\r\n\r\n";
